@@ -18,15 +18,16 @@ public class UserDaoJDBCImpl implements UserDao {
             " age TINYINT," +
             " PRIMARY KEY(id));";
     private static final String DELETE_IF_EXIST = "DROP TABLE IF EXISTS Users;";
-    // нужно по 3 параметрам, потому что в методе сохранения нет параметра "id", следовательно его нужно сделать автоинкрементом
+    /*
+        Знаки вопроса - динамическая подставка. Возможна благодаря PreparedStatement. Улучшает форматирование, облегчает
+        разработку, уберегает от SQL инъекций
+     */
     private static final String INSERT_USER = "INSERT INTO users(name, lastName, age) VALUES (?, ?, ?);";
     private static final String DELETE_USER = "DELETE FROM Users WHERE id = ?;";
     private static final String GET_ALL_USERS = "SELECT * FROM Users;";
     private static final String DELETE_ALL_USERS = "DELETE FROM users WHERE id > 0;";
     public UserDaoJDBCImpl() {
-        //Пустой конструктор по умолчанию
-        // Хотя я и не ебу нахуй он нужен
-        //upd Или нет
+        //upd Так вот для чего все таки нужна эта ебанная сериализация
     }
 
     // DONE!
@@ -50,11 +51,12 @@ public class UserDaoJDBCImpl implements UserDao {
     // DONE!
     public void saveUser(String name, String lastName, byte age) {
         try (Connection connection = Util.getConnection(); PreparedStatement stat = connection.prepareStatement(INSERT_USER)) {
+            // parameterindex - индекс подстановки ко знаку вопроса. Нумеруется с 1.
             stat.setString(1, name);
             stat.setString(2, lastName);
             stat.setByte(3, age);
             stat.executeUpdate();
-            System.out.println(name + " добавлен в базу данных.");
+            System.out.println(name + " был добавлен в базу данных.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -72,6 +74,7 @@ public class UserDaoJDBCImpl implements UserDao {
     public List<User> getAllUsers() {
         List<User> list = new ArrayList<>();
         try (Connection connection = Util.getConnection(); PreparedStatement stat = connection.prepareStatement(GET_ALL_USERS)) {
+            // ResultSet не надо закрывать, потому что он он AutoCloseble, но метод close вызывается, когда закрывается его стейтмент
             ResultSet rs = stat.executeQuery();
             while (rs.next()){
                 long id = rs.getLong("id");

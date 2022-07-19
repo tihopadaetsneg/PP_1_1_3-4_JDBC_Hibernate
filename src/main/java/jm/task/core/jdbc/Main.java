@@ -1,7 +1,7 @@
 package jm.task.core.jdbc;
 
-
-import jm.task.core.jdbc.model.User;
+// А как импортировать все классы в поддиректориях?
+import jm.task.core.jdbc.model.*;
 import jm.task.core.jdbc.service.UserServiceImpl;
 
 
@@ -9,11 +9,6 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        // реализуйте алгоритм здесь
-
-        UserServiceImpl userService = new UserServiceImpl();
-
-
         /*
             1. Создание таблицы.
             2. Создание 4-х экземпляров класса User
@@ -22,11 +17,12 @@ public class Main {
             5. Очистка таблицы.
             6. Удаление таблицы.
          */
+        UserServiceImpl userService = new UserServiceImpl();
         userService.createUsersTable();
-        userService.saveUser("Leonardo", "Blue", (byte)15);
-        userService.saveUser("Rafael", "Red", (byte)15);
-        userService.saveUser("Donatello", "Purple", (byte)15);
-        userService.saveUser("Mikelangelo", "Orange", (byte)15);
+        userService.saveUser("Леонардо", "Сплинтерович", (byte)15);
+        userService.saveUser("Рафаэль", "Сплинтерович", (byte)15);
+        userService.saveUser("Донателло", "Сплинтерович", (byte)15);
+        userService.saveUser("Миккиланджело", "Сплинтерович", (byte)15);
         List<User> list = userService.getAllUsers();
         for (User l: list
         ) {
